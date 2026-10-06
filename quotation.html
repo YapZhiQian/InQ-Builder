@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pearl Yenn | Quotation Builder</title>
+
+<style>
+:root {
+  --gold: #ae7b22;
+  --ink: #202020;
+  --muted: #696969;
+  --paper: #fff;
+  --bg: #f2f0ec;
+  --head: #888;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.45 Arial, Helvetica, sans-serif;
+}
+
+.topbar {
+  background: #222;
+  color: #fff;
+  padding: 15px max(22px, calc((100% - 1180px) / 2));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand { font-weight: 700; letter-spacing: .03em; }
+.brand span { color: #d7af65; }
+.topbar small { color: #ccc; }
+
+.layout {
+  max-width: 1180px;
+  margin: 28px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.panel {
+  background: white;
+  border: 1px solid #e5e1da;
+  border-radius: 10px;
+  padding: 22px;
+  box-shadow: 0 4px 20px #25200d0a;
+}
+
+.panel h1 { font-size: 21px; margin: 0 0 5px; }
+.hint { font-size: 13px; color: var(--muted); margin: 0 0 20px; }
+
+.field { margin: 0 0 14px; }
+
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #555;
+  margin: 0 0 5px;
+}
+
+.field input, .row-input {
+  width: 100%;
+  padding: 10px 11px;
+  border: 1px solid #d7d4cd;
+  border-radius: 6px;
+  font: inherit;
+  outline: none;
+}
+
+.field input:focus, .row-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px #ae7b221a;
+}
+
+.section-label { font-size: 13px; font-weight: 700; margin: 20px 0 9px; }
+.item-editor { padding: 12px 0; border-top: 1px solid #eee; }
+
+.item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.remove {
+  border: 0;
+  background: transparent;
+  color: #a43932;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.grid2 .wide { grid-column: 1 / -1; }
+.grid2 label { font-size: 11px; color: #666; display: block; margin-bottom: 4px; }
+.row-input { padding: 8px; font-size: 13px; }
+.description-input { min-height: 76px; resize: vertical; font-family: inherit; }
+
+.actions { display: flex; gap: 9px; margin-top: 14px; }
+
+.btn {
+  border: 1px solid #c9c5bd;
+  background: #fff;
+  color: #222;
+  border-radius: 6px;
+  padding: 10px 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn:hover { background: #f8f6f2; }
+.btn.primary { background: #252525; color: white; border-color: #252525; }
+.btn.primary:hover { background: #444; }
+.btn.full { width: 100%; margin-top: 8px; }
+
+.preview-wrap { overflow: auto; }
+
+.paper {
+  background: var(--paper);
+  width: 100%;
+  max-width: 780px;
+  aspect-ratio: 210 / 297;
+  margin: 0 auto;
+  padding: 42px 56px 50px;
+  box-shadow: 0 8px 32px #211d1517;
+  font-size: 13px;
+}
+
+.company { text-align: center; }
+
+.logo {
+  display: block;
+  width: 200px;
+  height: 165px;
+  object-fit: contain;
+  margin: 0 auto 2px;
+}
+
+.company-name { font-size: 18px; font-weight: 700; margin-top: 4px; }
+.reg, .address { font-size: 13px; }
+.company-phone { margin-top: 2px; }
+
+.quote-meta {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  column-gap: 28px;
+  align-items: start;
+  margin: 36px 0 0;
+}
+
+.recipient { font-weight: 700; }
+.meta-label, .meta-value { white-space: nowrap; }
+.meta-label { min-width: 92px; }
+
+.site-line {
+  min-height: 44px;
+  margin: 48px 0 2px;
+  font-weight: 700;
+}
+
+.site-line.no-site {
+  min-height: 0;
+  margin: 18px 0 18px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12.5px;
+}
+
+.table th {
+  background: var(--head);
+  color: #fff;
+  text-align: left;
+  padding: 5px 7px;
+  font-weight: 700;
+}
+
+.table td { padding: 5px 7px; vertical-align: top; overflow-wrap: anywhere; }
+.table th:first-child, .table td:first-child { text-align: center; width: 46px; }
+.table th:nth-child(2) { width: auto; }
+.table th:nth-child(3), .table td:nth-child(3) { width: 53px; text-align: center; }
+.table th:nth-child(4), .table td:nth-child(4) {
+  width: 82px;
+  text-align: center;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.table th:nth-child(5), .table td:nth-child(5) { width: 93px; text-align: center; }
+.table td:nth-child(2) { white-space: pre-line; }
+.table th:nth-child(n+3), .table td:nth-child(n+3) { vertical-align: middle; }
+.table.no-rate th:nth-child(4), .table.no-rate td:nth-child(4) { display: none; }
+
+.totals {
+  width: 185px;
+  margin: 32px 24px 0 auto;
+  font-weight: 700;
+}
+
+.totalrow { display: flex; justify-content: space-between; margin: 2px 0; }
+
+.terms { margin: 21px 0 0 8px; font-size: 12.5px; }
+.terms-title { font-weight: 700; text-decoration: underline; margin-bottom: 4px; }
+.terms p { margin: 5px 0; }
+.bank { font-weight: 700; font-style: italic; margin: 6px 0; }
+
+.footnote { font-size: 11px; color: #777; text-align: center; margin-top: 14px; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .paper { aspect-ratio: auto; min-height: 0; }
+  .topbar { padding-left: 20px; padding-right: 20px; }
+}
+
+@media (max-width: 520px) {
+  .paper { padding: 30px 22px; font-size: 12px; }
+  .quote-meta { column-gap: 9px; grid-template-columns: 1fr auto auto; }
+  .meta-label { min-width: 78px; }
+  .table { font-size: 10.5px; }
+  .table th, .table td { padding: 5px 3px; }
+  .table th:first-child, .table td:first-child { width: 33px; }
+  .table th:nth-child(3), .table td:nth-child(3) { width: 42px; }
+  .table th:nth-child(4), .table td:nth-child(4) { width: 76px; }
+  .table th:nth-child(5), .table td:nth-child(5) { width: 78px; }
+  .totals { width: 210px; margin-right: 12px; }
+}
+
+@media print {
+  @page { size: A4; margin: 0; }
+
+  body { background: white; }
+  .topbar, .panel, .footnote { display: none !important; }
+  .layout { display: block; margin: 0; padding: 0; }
+  .preview-wrap { overflow: visible; }
+
+  .paper {
+    width: 210mm;
+    height: 297mm;
+    min-height: 297mm;
+    max-width: none;
+    margin: 0;
+    padding: 14mm 18mm 15mm;
+    box-shadow: none;
+    font-size: 12px;
+    break-after: avoid;
+  }
+
+  .company-name { font-size: 17px; }
+  .logo { height: 120px; }
+  .quote-meta { margin-top: 30px; }
+  .site-line { margin-top: 40px; }
+  .terms { font-size: 12px; }
+}
+</style>
+</head>
+
+<body>
+<header class="topbar">
+  <div class="brand">QUOTATION</div>
+  <small>Quotation builder</small>
+</header>
+
+<main class="layout">
+  <section class="panel" aria-label="Quotation form">
+    <h1>Create a quotation</h1>
+    <p class="hint">Fill in the details. The quotation preview updates automatically.</p>
+
+    <div class="field">
+      <label for="to">TO</label>
+      <input id="to" placeholder="Customer / company name">
+    </div>
+
+    <div class="field">
+      <label for="qno">QUOTATION NO.</label>
+      <input id="qno" placeholder="e.g. PY 10-002/26">
+    </div>
+
+    <div class="field">
+      <label for="qdate">QUOTATION DATE</label>
+      <input id="qdate" type="date">
+    </div>
+
+    <div class="field">
+      <label for="site">SITE (OPTIONAL)</label>
+      <input id="site" placeholder="e.g. Beleco Clinic">
+    </div>
+
+    <div class="section-label">Items</div>
+    <div id="editItems"></div>
+
+    <button class="btn full" id="addItem" type="button">＋ Add item</button>
+
+    <div class="actions">
+      <button class="btn primary" id="print" type="button">Print / Save PDF</button>
+      <button class="btn" id="reset" type="button">Clear form</button>
+    </div>
+
+    <p class="hint" style="margin:14px 0 0">
+      To share this form as a public link, publish this page on a web host.
+    </p>
+  </section>
+
+  <section class="preview-wrap">
+    <article class="paper" id="quotation">
+      <div class="company">
+        <img class="logo" src="logo.png" alt="Pearl Yenn logo">
+        <div class="company-name">Pearl Yenn Decoration &amp; Renovation</div>
+        <div class="reg">(002810180-T)</div>
+        <div class="company-phone">H/P: 011-27721681</div>
+      </div>
+
+      <div class="quote-meta">
+        <div class="recipient" id="pvTo">To:</div>
+        <div>
+          <div class="meta-label">Quotation#</div>
+          <div class="meta-label">Quotation Date</div>
+        </div>
+        <div>
+          <div class="meta-value" id="pvNo"></div>
+          <div class="meta-value" id="pvDate"></div>
+        </div>
+      </div>
+
+      <div class="site-line" id="pvSite"></div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Description</th>
+            <th>Qty</th>
+            <th>Rate</th>
+            <th>Amount (RM)</th>
+          </tr>
+        </thead>
+        <tbody id="pvItems"></tbody>
+      </table>
+
+      <div class="totals">
+        <div class="totalrow"><span>Sub Total</span><span id="pvSubtotal">0.00</span></div>
+        <div class="totalrow"><span>Total</span><span id="pvTotal">0.00</span></div>
+      </div>
+
+      <div class="terms">
+        <div class="terms-title">Term and Condition</div>
+        <p>Deposit 40% payment.</p>
+        <p>Second payment 50% on site install.</p>
+        <p>Remaining 10% payable within 2 weeks after completion.</p>
+        <p>All cheques should be crossed and made payable to:</p>
+        <div class="bank">PEARL YENN DECORATION &amp; RENOVATION</div>
+        <div class="bank">MAYBANK 5648 5631 1681</div>
+      </div>
+    </article>
+
+    <div class="footnote">Choose “Save as PDF” in the print dialog to save a copy.</div>
+  </section>
+</main>
+
+<script>
+const fields = ["to", "qno", "qdate", "site"];
+let items = [{ description: "", qty: "", rate: "", amount: "" }];
+
+function money(value) {
+  return Number(value || 0).toFixed(2);
+}
+
+function displayRate(value) {
+  const text = String(value ?? "").trim();
+  if (!text) return "";
+  const numeric = Number(text.replace(/,/g, ""));
+  return Number.isFinite(numeric) ? money(numeric) : escapeHTML(text);
+}
+
+function displayAmount(value) {
+  return displayRate(value);
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function renderEditor() {
+  const host = document.getElementById("editItems");
+
+  host.innerHTML = items.map((item, index) => `
+    <div class="item-editor">
+      <div class="item-head">
+        <span>Item ${index + 1}</span>
+        ${items.length > 1
+          ? `<button type="button" class="remove" data-remove="${index}">Remove</button>`
+          : ""}
+      </div>
+
+      <div class="grid2">
+        <div class="wide">
+          <label>Description</label>
+          <textarea class="row-input description-input"
+                 data-field="description"
+                 data-i="${index}"
+                 placeholder="Describe the work or materials">${escapeHTML(item.description)}</textarea>
+        </div>
+
+        <div>
+          <label>Qty</label>
+          <input class="row-input"
+                 data-field="qty"
+                 data-i="${index}"
+                 type="text"
+                 placeholder="0"
+                 value="${escapeHTML(item.qty)}">
+        </div>
+
+        <div>
+          <label>Rate (RM) — optional</label>
+          <input class="row-input"
+                 data-field="rate"
+                 data-i="${index}"
+                 type="text"
+                 placeholder="0.00"
+                 value="${escapeHTML(item.rate)}">
+        </div>
+
+        <div class="wide">
+          <label>Amount (RM) — optional override</label>
+          <input class="row-input"
+                 data-field="amount"
+                 data-i="${index}"
+                 type="text"
+                 placeholder="Auto-calculated from Qty × Rate"
+                 value="${escapeHTML(item.amount)}">
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  host.querySelectorAll("[data-field]").forEach(input => {
+    input.addEventListener("input", () => {
+      items[input.dataset.i][input.dataset.field] = input.value;
+      renderPreview();
+    });
+  });
+
+  host.querySelectorAll("[data-remove]").forEach(button => {
+    button.addEventListener("click", () => {
+      items.splice(Number(button.dataset.remove), 1);
+      renderEditor();
+      renderPreview();
+    });
+  });
+}
+
+function renderPreview() {
+  const customer = document.getElementById("to").value;
+  const quoteNumber = document.getElementById("qno").value;
+  const quoteDate = document.getElementById("qdate").value;
+  const site = document.getElementById("site").value.trim();
+
+  document.getElementById("pvTo").textContent = "To: " + customer;
+  document.getElementById("pvNo").textContent = quoteNumber;
+
+  document.getElementById("pvDate").textContent = quoteDate
+    ? new Date(quoteDate + "T00:00:00").toLocaleDateString("en-GB")
+    : "";
+
+  const siteLine = document.getElementById("pvSite");
+  siteLine.textContent = site ? "Site: " + site : "";
+  siteLine.style.display = "block";
+  siteLine.classList.toggle("no-site", !site);
+
+  let subtotal = 0;
+
+  document.querySelector(".table").classList.toggle(
+    "no-rate",
+    items.every(item => !item.rate.trim())
+  );
+
+  document.getElementById("pvItems").innerHTML = items.map((item, index) => {
+    const calculatedAmount = (Number(item.qty) || 0) * (Number(item.rate) || 0);
+    const hasManualAmount = item.amount.trim() !== "";
+    const amountValue = hasManualAmount ? item.amount.trim() : calculatedAmount;
+    const amountForTotal = hasManualAmount
+      ? Number(item.amount.replace(/[,RM\s]/gi, "")) || 0
+      : calculatedAmount;
+    subtotal += amountForTotal;
+
+    return `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${escapeHTML(item.description)}</td>
+        <td>${escapeHTML(item.qty)}</td>
+        <td>${displayRate(item.rate)}</td>
+        <td>${displayAmount(amountValue)}</td>
+      </tr>
+    `;
+  }).join("");
+
+  document.getElementById("pvSubtotal").textContent = money(subtotal);
+  document.getElementById("pvTotal").textContent = money(subtotal);
+}
+
+fields.forEach(id => {
+  document.getElementById(id).addEventListener("input", renderPreview);
+});
+
+document.getElementById("addItem").addEventListener("click", () => {
+  items.push({ description: "", qty: "", rate: "", amount: "" });
+  renderEditor();
+  renderPreview();
+});
+
+document.getElementById("print").addEventListener("click", () => window.print());
+
+document.getElementById("reset").addEventListener("click", () => {
+  fields.forEach(id => {
+    document.getElementById(id).value = "";
+  });
+
+  items = [{ description: "", qty: "", rate: "", amount: "" }];
+  renderEditor();
+  renderPreview();
+});
+
+renderEditor();
+renderPreview();
+</script>
+</body>
+</html>

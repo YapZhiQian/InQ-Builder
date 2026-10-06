@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f3f0e9">
+<title>Pearl Yenn | Choose a document</title>
+<style>
+:root {
+  color-scheme: light;
+  --ink: #202020;
+  --gold: #ae7b22;
+  --paper: #fff;
+  --bg: #f3f0e9;
+}
+* { box-sizing: border-box; }
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 28px 18px;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 Arial, Helvetica, sans-serif;
+}
+.chooser {
+  width: min(100%, 560px);
+  padding: 38px;
+  border: 1px solid #e4dfd4;
+  border-radius: 20px;
+  background: var(--paper);
+  box-shadow: 0 16px 48px #30261112;
+  text-align: center;
+}
+.logo {
+  display: block;
+  width: 140px;
+  height: 110px;
+  margin: 0 auto 12px;
+  object-fit: contain;
+}
+.company { margin: 0; font-size: 19px; font-weight: 700; }
+.reg { margin: 1px 0 28px; color: #6b675f; font-size: 13px; }
+h1 { margin: 0; font-size: clamp(25px, 6vw, 32px); line-height: 1.2; }
+.instruction { margin: 10px 0 26px; color: #5d5a54; }
+.choices { display: grid; gap: 16px; }
+.choice {
+  min-height: 108px;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 2px solid #e2d5bb;
+  border-radius: 14px;
+  background: #fffdfa;
+  color: var(--ink);
+  text-align: left;
+  text-decoration: none;
+  transition: border-color .15s ease, background .15s ease, transform .15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.choice:hover, .choice:focus-visible {
+  border-color: var(--gold);
+  background: #fff9ed;
+  outline: none;
+  transform: translateY(-1px);
+}
+.choice-name { display: block; font-size: 25px; font-weight: 700; }
+.choice-cn { display: block; margin-top: 3px; color: #68635b; font-size: 16px; }
+.arrow { color: var(--gold); font-size: 30px; line-height: 1; }
+.note { margin: 22px 0 0; color: #77736d; font-size: 13px; }
+@media (max-width: 480px) {
+  body { padding: 16px 12px; }
+  .chooser { padding: 28px 20px; border-radius: 16px; }
+  .choice { min-height: 98px; padding: 16px 18px; }
+}
+</style>
+</head>
+<body>
+<main class="chooser">
+  <img class="logo" src="logo.png" alt="Pearl Yenn logo">
+  <h1>Choose a document</h1>
+  <p class="instruction" lang="zh-Hans">请选择要制作的单据 / Please choose the document you want to create.</p>
+  <nav class="choices" aria-label="Choose invoice or quotation">
+    <a class="choice" href="quotation.html">
+      <span><span class="choice-name">Quotation</span><span class="choice-cn" lang="zh-Hans">报价单</span></span>
+      <span class="arrow" aria-hidden="true">›</span>
+    </a>
+    <a class="choice" href="invoice.html">
+      <span><span class="choice-name">Invoice</span><span class="choice-cn" lang="zh-Hans">发票</span></span>
+      <span class="arrow" aria-hidden="true">›</span>
+    </a>
+  </nav>
+</main>
+</body>
+</html>
