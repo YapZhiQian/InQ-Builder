@@ -140,8 +140,8 @@ body {
 
 .paper.pdf-export {
   width: 210mm !important;
-  height: 297mm !important;
-  min-height: 297mm !important;
+  height: 296mm !important;
+  min-height: 296mm !important;
   max-width: none !important;
   aspect-ratio: 210 / 297 !important;
   margin: 0 !important;
@@ -608,7 +608,7 @@ document.getElementById("print").addEventListener("click", async event => {
       scrollY: 0
     },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    pagebreak: { mode: ["css", "legacy"] }
+    pagebreak: { mode: ["css"] }
   };
 
   try {
