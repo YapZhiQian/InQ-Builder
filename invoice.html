@@ -135,7 +135,36 @@ body {
   margin: 0 auto;
   padding: 42px 56px 50px;
   box-shadow: 0 8px 32px #211d1517;
-  font-size: 13px;
+  font-size: 11pt;
+}
+
+.paper.pdf-export {
+  width: 210mm !important;
+  height: 297mm !important;
+  min-height: 297mm !important;
+  max-width: none !important;
+  aspect-ratio: 210 / 297 !important;
+  margin: 0 !important;
+  padding: 14mm 18mm 15mm !important;
+  box-shadow: none !important;
+  font-size: 11pt !important;
+}
+.paper.pdf-export .company-name { font-size: 14pt; }
+.paper.pdf-export .logo {
+  width: auto !important;
+  height: 120px !important;
+  max-width: 200px;
+  object-fit: contain;
+}
+.paper.pdf-export .quote-meta { margin-top: 30px; }
+.paper.pdf-export .site-line { margin-top: 40px; }
+.paper.pdf-export .table,
+.paper.pdf-export .terms { font-size: 11pt; }
+.paper.pdf-export .table th {
+  background: #888 !important;
+  color: #fff !important;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .company { text-align: center; }
@@ -148,8 +177,8 @@ body {
   margin: 0 auto 2px;
 }
 
-.company-name { font-size: 18px; font-weight: 700; margin-top: 4px; }
-.reg, .address { font-size: 13px; }
+.company-name { font-size: 14pt; font-weight: 700; margin-top: 4px; }
+.reg, .address { font-size: 11pt; }
 .company-phone { margin-top: 2px; }
 
 .quote-meta {
@@ -161,6 +190,9 @@ body {
 }
 
 .recipient { font-weight: 700; }
+.quote-meta .recipient { grid-column: 1 / -1; }
+.quote-meta > div:nth-child(2) { grid-column: 2; grid-row: 2; }
+.quote-meta > div:nth-child(3) { grid-column: 3; grid-row: 2; }
 .meta-label, .meta-value { white-space: nowrap; }
 .meta-label { min-width: 92px; }
 
@@ -179,12 +211,14 @@ body {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  font-size: 12.5px;
+  font-size: 11pt;
 }
 
 .table th {
   background: var(--head);
   color: #fff;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
   text-align: left;
   padding: 5px 7px;
   font-weight: 700;
@@ -214,7 +248,7 @@ body {
 
 .totalrow { display: flex; justify-content: space-between; margin: 2px 0; }
 
-.terms { margin: 21px 0 0 8px; font-size: 12.5px; }
+.terms { margin: 21px 0 0 8px; font-size: 11pt; }
 .terms-title { font-weight: 700; text-decoration: underline; margin-bottom: 4px; }
 .terms p { margin: 5px 0; }
 .bank { font-weight: 700; font-style: italic; margin: 6px 0; }
@@ -223,7 +257,7 @@ body {
   justify-content: space-between;
   gap: 20px;
   margin: 70px 0 0 8px;
-  font-size: 14px;
+  font-size: 11pt;
 }
 .signature-label { width: 48%; }
 
@@ -236,10 +270,10 @@ body {
 }
 
 @media (max-width: 520px) {
-  .paper { padding: 30px 22px; font-size: 12px; }
+  .paper { padding: 30px 22px; font-size: 11pt; }
   .quote-meta { column-gap: 9px; grid-template-columns: 1fr auto auto; }
   .meta-label { min-width: 78px; }
-  .table { font-size: 10.5px; }
+  .table { font-size: 11pt; }
   .table th, .table td { padding: 5px 3px; }
   .table th:first-child, .table td:first-child { width: 33px; }
   .table th:nth-child(3), .table td:nth-child(3) { width: 42px; }
@@ -264,15 +298,15 @@ body {
     margin: 0;
     padding: 14mm 18mm 15mm;
     box-shadow: none;
-    font-size: 12px;
+    font-size: 11pt;
     break-after: avoid;
   }
 
-  .company-name { font-size: 17px; }
+  .company-name { font-size: 14pt; }
   .logo { height: 120px; }
   .quote-meta { margin-top: 30px; }
   .site-line { margin-top: 40px; }
-  .terms { font-size: 12px; }
+  .terms { font-size: 11pt; }
 }
 </style>
 </head>
@@ -314,7 +348,7 @@ body {
     <button class="btn full" id="addItem" type="button">＋ Add item</button>
 
     <div class="actions">
-      <button class="btn primary" id="print" type="button">Print / Save PDF</button>
+      <button class="btn primary" id="print" type="button">Download PDF</button>
       <button class="btn" id="reset" type="button">Clear form</button>
     </div>
 
@@ -383,6 +417,9 @@ body {
   </section>
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 const fields = ["to", "qno", "qdate", "site"];
 let items = [{ description: "", qty: "", rate: "", amount: "" }];
@@ -541,7 +578,44 @@ document.getElementById("addItem").addEventListener("click", () => {
   renderPreview();
 });
 
-document.getElementById("print").addEventListener("click", () => window.print());
+document.getElementById("print").addEventListener("click", async event => {
+  const button = event.currentTarget;
+  if (typeof html2pdf === "undefined") {
+    alert("PDF download is unavailable. Please check your internet connection and try again.");
+    return;
+  }
+
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "Preparing PDF…";
+  const date = document.getElementById("qdate").value || "undated";
+  const paper = document.getElementById("quotation");
+  paper.classList.add("pdf-export");
+  const options = {
+    margin: 0,
+    filename: `invoice-${date}.pdf`,
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+      scrollY: 0
+    },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    pagebreak: { mode: ["css", "legacy"] }
+  };
+
+  try {
+    await html2pdf().set(options).from(paper).save();
+  } catch (error) {
+    console.error("PDF download failed:", error);
+    alert("PDF download failed. Please try again.");
+  } finally {
+    paper.classList.remove("pdf-export");
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+});
 
 document.getElementById("reset").addEventListener("click", () => {
   fields.forEach(id => {
